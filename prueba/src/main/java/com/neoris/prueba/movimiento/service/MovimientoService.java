@@ -1,7 +1,10 @@
 package com.neoris.prueba.movimiento.service;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,6 +75,24 @@ public class MovimientoService implements IMovimientoService {
 		} catch (Exception e) {
 			throw new Exception("Movimiento con id: " + id + " no pudo ser eliminado.");
 		}
+	}
+
+
+	@Override
+	public Map<String, Object> generarReporte(Integer id, LocalDate fechaInicio, LocalDate fechaFin) {
+		CuentaEntity cuenta = new CuentaEntity();
+		
+		cuenta = cuentaRepository.findByNumCuenta(id);
+		int saldoAhorros = movimientoRepository.saldoAhorros(id, fechaInicio, fechaFin);
+		int saldoCorriente = movimientoRepository.saldoCorriente(id, fechaInicio, fechaFin);
+		
+		Map<String, Object> reporte = new HashMap<>();
+		reporte.put("identidad", id);
+        reporte.put("saldoTotal", (saldoAhorros + saldoCorriente));
+        reporte.put("totalAhorros", saldoAhorros);
+        reporte.put("totalCorriente", saldoCorriente);
+		
+		return reporte;
 	}
 
 }

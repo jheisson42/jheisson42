@@ -1,6 +1,9 @@
 package com.neoris.prueba.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neoris.prueba.movimiento.service.IMovimientoService;
@@ -51,6 +55,18 @@ public class MovimientoController {
         try {
         	System.out.println();
         	return ResponseEntity.status(HttpStatus.OK).body(movimientoService.consultarMovimientos());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
+    
+    @GetMapping("/reportes/{idMovimiento}")
+    public ResponseEntity<Object> reporte(@PathVariable("idMovimiento") Integer idMovimiento, 
+    									  @RequestParam("fechaIni")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaInicio,
+    									  @RequestParam("fechaFin")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fechaFin) {
+        try {
+        	System.out.println();
+        	return ResponseEntity.status(HttpStatus.OK).body(movimientoService.generarReporte(idMovimiento, fechaInicio, fechaFin));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
